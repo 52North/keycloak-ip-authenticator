@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>org.n52</groupId>
     <artifactId>keycloak-ip-authenticator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
@@ -67,4 +67,33 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>notice</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jasig.maven</groupId>
+                        <artifactId>notice-maven-plugin</artifactId>
+                        <configuration>
+                            <noticeTemplate>etc/NOTICE.template</noticeTemplate>
+                            <licenseMapping>
+                                <param>etc/license-mappings.xml</param>
+                            </licenseMapping>
+                            <generateChildNotices>false</generateChildNotices>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>generate-notice</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
