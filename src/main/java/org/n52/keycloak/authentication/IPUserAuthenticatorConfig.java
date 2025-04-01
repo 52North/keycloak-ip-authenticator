@@ -1,6 +1,5 @@
 package org.n52.keycloak.authentication;
 
-import org.jboss.logging.Logger;
 import org.keycloak.models.AuthenticatorConfigModel;
 
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import static org.n52.keycloak.authentication.IPUserAuthenticatorFactory.*;
 
 public class IPUserAuthenticatorConfig {
-    private static final Logger LOG = Logger.getLogger(IPUserAuthenticatorConfig.class);
 
     private boolean useForwardedHeader;
     private String forwardedHeaderName;

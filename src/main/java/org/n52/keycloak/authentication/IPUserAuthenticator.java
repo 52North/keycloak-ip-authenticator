@@ -27,7 +27,6 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
     private static final String IP_AUTH_ENABLED_ATTR = "ipAuthEnabled";
     private static final String IP_AUTH_RANGES_ATTR = "ipAuthRanges";
     private static final String INVALID_IP_ERROR_MESSAGE = "invalid-ip-error";
-    private static final String MISSING_IP_ERROR_MESSAGE = "missing-ip-error";
     private static final String LOGIN_FORM = "login-ip.ftl";
 
     @Override
@@ -60,7 +59,8 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
     private boolean validateIpAndIdentifyUser(AuthenticationFlowContext context, IPAddress ipAddress) {
         context.clearUser();
         UserModel user = identifyUser(context, ipAddress);
-        return user != null  && validateUser(context, user);
+        LOG.debug(MessageFormat.format("Identified user ''{0}'' for IP ''{1}''", user.getId(), ipAddress.toAddressString().toString()));
+        return validateUser(context, user);
     }
 
     private UserModel identifyUser(AuthenticationFlowContext context, IPAddress ipAddress) {
@@ -115,6 +115,7 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
 //        } else {
 //            context.getAuthenticationSession().removeAuthNote(Details.REMEMBER_ME);
 //        }
+        LOG.debug(MessageFormat.format("Validated user ''{0}''.", user.getId()));
         context.setUser(user);
         return true;
     }
