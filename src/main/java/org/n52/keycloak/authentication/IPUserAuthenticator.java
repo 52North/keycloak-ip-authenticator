@@ -14,7 +14,9 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.FormMessage;
 
+import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -25,6 +27,7 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
     private static final String IP_AUTH_ENABLED_ATTR = "ipAuthEnabled";
     private static final String IP_AUTH_RANGES_ATTR = "ipAuthRanges";
     private static final String INVALID_IP_ERROR_MESSAGE = "invalid-ip-error";
+    private static final String MISSING_IP_ERROR_MESSAGE = "missing-ip-error";
     private static final String LOGIN_FORM = "login-ip.ftl";
 
     @Override
@@ -44,13 +47,13 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
         if (clientIpAddress.isPresent()) {
             boolean validated = validateIpAndIdentifyUser(context, clientIpAddress.get());
             if (!validated) {
-                Response challenge =  context.form()
-                        .setError(INVALID_IP_ERROR_MESSAGE)
-                        .createForm(LOGIN_FORM);
-                context.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge);
+                context.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge(context, INVALID_IP_ERROR_MESSAGE));
                 return;
             }
             context.success();
+        } else {
+            LOG.warn(MessageFormat.format("Missing IP address in HTTP forwarded header ''{0}''.", config.getForwardedHeaderName()));
+            context.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge(context, INVALID_IP_ERROR_MESSAGE));
         }
     }
 
@@ -74,8 +77,20 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
 
         Stream<UserModel> userStream = session.users().searchForUserStream(realm, params);
         //TODO check if multiple users exists for IP and setDuplicateUserChallenge if applicable
-        Optional<UserModel> user = userStream.filter(u -> matchesIp(u, ipAddress)).findFirst();
-        return user.orElse(null);
+        List<UserModel> userCandidates = userStream.filter(u -> matchesIp(u, ipAddress)).toList();
+        if(userCandidates.isEmpty()){
+            LOG.warn(MessageFormat.format("No matching user found for IP ''{0}''.", ipAddress.toAddressString().toString()));
+            return null;
+        } else {
+            UserModel user = userCandidates.get(0);
+            if(userCandidates.size() > 1){
+                LOG.warn(MessageFormat.format("Recognized multiple users for IP ''{0}''. Only the first user with ID ''{1}'' will be selected.", ipAddress.toAddressString().toString(), user.getId()));
+                LOG.debug(MessageFormat.format("Recognized users: {0}",
+                        userCandidates.stream().map(UserModel::getId).collect(Collectors.joining())));
+            }
+            return user;
+        }
+
     }
 
     private boolean matchesIp(UserModel user, IPAddress ipAddress) {

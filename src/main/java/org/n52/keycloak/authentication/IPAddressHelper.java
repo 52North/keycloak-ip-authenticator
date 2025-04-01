@@ -37,6 +37,7 @@ public class IPAddressHelper {
         final List<String> forwardedHeaders = context.getHttpRequest()
                 .getHttpHeaders()
                 .getRequestHeader(config.getForwardedHeaderName().trim());
+        LOG.debug(format("Forwarded headers: {0}", forwardedHeaders));
         if (forwardedHeaders == null) {
             return Optional.empty();
         }
