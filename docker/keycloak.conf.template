@@ -1,0 +1,20 @@
+upstream keycloak {
+    server ${KEYCLOAK};
+}
+
+server {
+    listen            ${NGINX_PORT};
+    listen       [::]:${NGINX_PORT};
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Nginx-Proxy true;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    location /keycloak/ {
+        proxy_pass http://keycloak/;
+    }
+
+}
