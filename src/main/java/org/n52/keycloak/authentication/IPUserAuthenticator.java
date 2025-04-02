@@ -12,7 +12,6 @@ import org.keycloak.forms.login.LoginFormsProvider;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
-import org.keycloak.models.utils.FormMessage;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -32,7 +31,6 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
     @Override
     public void authenticate(AuthenticationFlowContext context) {
         //TODO: Check if we need remember me form data
-
         Response challenge = context.form()
                 .createForm(LOGIN_FORM);
         context.challenge(challenge);
@@ -46,7 +44,6 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
         if (clientIpAddress.isPresent()) {
             boolean validated = validateIpAndIdentifyUser(context, clientIpAddress.get());
             if (!validated) {
-                context.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge(context, INVALID_IP_ERROR_MESSAGE));
                 return;
             }
             context.success();
@@ -59,13 +56,17 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
     private boolean validateIpAndIdentifyUser(AuthenticationFlowContext context, IPAddress ipAddress) {
         context.clearUser();
         UserModel user = identifyUser(context, ipAddress);
-        LOG.debug(MessageFormat.format("Identified user ''{0}'' for IP ''{1}''", user.getId(), ipAddress.toAddressString().toString()));
-        return validateUser(context, user);
+        if(user != null) {
+            LOG.debug(MessageFormat.format("Identified user ''{0}'' for IP ''{1}''", user.getId(), ipAddress.toAddressString().toString()));
+        }
+        return user != null  && validateUser(context, user);
     }
 
     private UserModel identifyUser(AuthenticationFlowContext context, IPAddress ipAddress) {
         UserModel user = findUserByIp(context, ipAddress);
-        testInvalidUser(context, user);
+        if(user == null) {
+            context.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge(context, INVALID_IP_ERROR_MESSAGE));
+        }
         return user;
     }
 
@@ -90,7 +91,6 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
             }
             return user;
         }
-
     }
 
     private boolean matchesIp(UserModel user, IPAddress ipAddress) {
@@ -106,30 +106,17 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
         if (!enabledUser(context, user)) {
             return false;
         }
-        //TODO Check if we need this
-//        String rememberMe = inputData.getFirst("rememberMe");
-//        boolean remember = context.getRealm().isRememberMe() && rememberMe != null && rememberMe.equalsIgnoreCase("on");
-//        if (remember) {
-//            context.getAuthenticationSession().setAuthNote(Details.REMEMBER_ME, "true");
-//            context.getEvent().detail(Details.REMEMBER_ME, "true");
-//        } else {
-//            context.getAuthenticationSession().removeAuthNote(Details.REMEMBER_ME);
-//        }
+        //TODO Check if we need remember me handling
         LOG.debug(MessageFormat.format("Validated user ''{0}''.", user.getId()));
         context.setUser(user);
         return true;
     }
 
-    @Override
     protected Response challenge(AuthenticationFlowContext context, String error, String field) {
         LoginFormsProvider form = context.form()
                 .setExecution(context.getExecution().getId());
         if (error != null) {
-            if (field != null) {
-                form.addError(new FormMessage(field, error));
-            } else {
-                form.setError(error);
-            }
+            form.setError(error);
         }
         return context.form()
                 .createForm(LOGIN_FORM);

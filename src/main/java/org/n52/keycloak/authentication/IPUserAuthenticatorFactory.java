@@ -78,7 +78,9 @@ public class IPUserAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public String getHelpText() {
-        return "Validates a user by his current IP address.";
+        return "Validates a user by his current IP address. Users that should be authenticated by IP must have a " +
+                "custom user profile attribute 'ipAuthEnabled' set to 'true'. Supported IP addresses or ranges must be " +
+                "set for a custom custom user profile attribute 'ipAuthRanges'.";
     }
 
     @Override
