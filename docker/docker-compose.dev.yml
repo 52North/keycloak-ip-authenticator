@@ -1,18 +1,23 @@
 services:
   keycloak:
-    image: 52north/keycloak:26.1.4
+    image: quay.io/keycloak/keycloak:26.1.4
     container_name: keycloak
     restart: on-failure:5
-#    network_mode: host
+    # network_mode: host
     ports:
       - 8080:8080
+      - 8787:8787
     command:
       - start-dev
       - --import-realm
     volumes:
       - ./realm-export.json:/opt/keycloak/data/import/realm.json
+      - ../target/keycloak-ip-authenticator.jar:/opt/keycloak/providers/keycloak-ip-authenticator.jar
       - ./data:/opt/keycloak/data/h2/
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
       - KC_DB=dev-file
+      - DEBUG=true
+      - DEBUG_PORT='*:8787'
+      - KC_LOG_LEVEL=info,org.n52:debug

@@ -1,6 +1,6 @@
 {
   "id": "78127c76-3e71-4d91-a756-0d1479a6eed0",
-  "realm": "test",
+  "realm": "demo",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -49,7 +49,7 @@
     "realm": [
       {
         "id": "fafd768a-1091-4f5a-9dbd-bdc7a2b2959b",
-        "name": "default-roles-test",
+        "name": "default-roles-demo",
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
@@ -407,7 +407,7 @@
   "groups": [],
   "defaultRole": {
     "id": "fafd768a-1091-4f5a-9dbd-bdc7a2b2959b",
-    "name": "default-roles-test",
+    "name": "default-roles-demo",
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
@@ -482,13 +482,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/test/account/",
+      "baseUrl": "/realms/demo/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/test/account/*"
+        "/realms/demo/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -529,13 +529,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/test/account/",
+      "baseUrl": "/realms/demo/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/test/account/*"
+        "/realms/demo/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -714,13 +714,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/test/console/",
+      "baseUrl": "/admin/demo/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/test/console/*"
+        "/admin/demo/console/*"
       ],
       "webOrigins": [
         "+"
@@ -2437,7 +2437,8 @@
       "alias": "Browser IP Auth",
       "config": {
         "forwarded-header-name": "X-Forwarded-For",
-        "trusted-proxies-count": "1"
+        "trusted-proxies-count": "1",
+        "use-forwarded-header": "false"
       }
     },
     {
@@ -2577,7 +2578,7 @@
     "cibaInterval": "5",
     "realmReusableOtpCode": "false"
   },
-  "keycloakVersion": "26.1.3",
+  "keycloakVersion": "26.1.4",
   "userManagedAccessAllowed": false,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,

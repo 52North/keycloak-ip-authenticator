@@ -12,6 +12,16 @@ could be fetched, authentication fails.
 find matching ones. For multiple hits, only the first user is selected.
 4. The selected user is validated for proper configuration and set as authenticated.
 
+## Deployment
+You can build the project from source by running `mvn clean package`and provide the resulting JAR artifact in
+the Keycloak plugins directory of your Keycloak instance. For more, read the [Keycloak docs for registering
+custom providers](https://www.keycloak.org/docs/latest/server_development/index.html#registering-provider-implementations).
+
+This project also comes with a [Dockerfile](./Dockerfile) for building a custom Docker image that already integrates
+the JAR artifact within Keycloak. You may want to adapt the Dockerfile to your production setup. Build the image with
+`docker build -t 52north/keycloak:latest`. To start a Keycloak instance from it use the provided
+[Docker Compose setup](./docker/docker-compose.yml). 
+
 ## Credits
 This project is inspired by the great https://github.com/evosec/keycloak-ipaddress-authenticator project. If you look
 for conditional authentication flows based on the client's IP, you are right there.
