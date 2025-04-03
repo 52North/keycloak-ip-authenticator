@@ -174,9 +174,8 @@ This project includes:
   ZXing Java SE extensions under The Apache Software License, Version 2.0
 
 
-The methods for parsing and handling IP addresses in
-src/main/java/org/n52/keycloak/authentication/IPAddressHelper.java as well as
-the authenticator configuration in
-src/main/java/org/n52/keycloak/authentication/IPUserAuthenticatorConfig.java
-are inspired and in parts reused from https://github.com/evosec/keycloak-ipaddress-authenticator
-(Copyright (c) 2024 Evosec GmbH & Co. KG)
+Some parts of this project are inspired by https://github.com/evosec/keycloak-ipaddress-authenticator
+(Copyright (c) 2024 Evosec GmbH & Co. KG). Following components reuses code snippets from it:
+* methods for parsing and handling IP addresses in src/main/java/org/n52/keycloak/authentication/IPAddressHelper.java
+* authenticator configuration in src/main/java/org/n52/keycloak/authentication/IPUserAuthenticatorConfig.java
+* definition of provider config properties src/main/java/org/n52/keycloak/authentication/IPUserAuthenticatorFactory.java
