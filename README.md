@@ -68,8 +68,10 @@ at *Realm settings* -> *User profile*. Create the attributes as follows:
 
 ### 3) Enable IP Authentication for Users
 Finally, you have to enable authentication by IP address for some users by setting the `ipAuthEnabled` user profile 
-attribute for those users to `true`. You also have to add one or more supported IP addresses and/or IP ranges in CIDR.
-These addresses/ranges are validated against a client's IP address, to choose which user should be authenticated.
+attribute for those users to `true`. You also have to add one or more supported IP addresses and/or IP ranges for the
+`ipAuthRanges` user profile attribute. Check [this documentation](https://seancfoley.github.io/IPAddress/ipaddress.html#ip-address-ranges)
+to get more information about the supported IP range notations. These addresses/ranges are validated against a client's 
+IP address, to choose which user should be authenticated.
 
 ### 4) Choose IP Authentication for Login
 If you have properly configured IP Authentication as alternative step for the *Browser flow*, next time you have to
