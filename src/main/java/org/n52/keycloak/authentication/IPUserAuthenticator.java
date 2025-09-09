@@ -25,6 +25,7 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
 
     private static final String IP_AUTH_ENABLED_ATTR = "ipAuthEnabled";
     private static final String IP_AUTH_RANGES_ATTR = "ipAuthRanges";
+    private static final String IP_AUTH_MAX_SESSION = "ipAuthMaxSession";
     private static final String INVALID_IP_ERROR_MESSAGE = "invalid-ip-error";
     private static final String LOGIN_FORM = "login-ip.ftl";
 
@@ -106,6 +107,17 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
         if (!enabledUser(context, user)) {
             return false;
         }
+        RealmModel realm = context.getRealm();
+        long activeSessions = context.getSession()
+            .sessions()
+            .getUserSessionsStream(realm, user)
+            .count();
+        int maxSessions = Integer.parseInt(user.getFirstAttribute(IP_AUTH_MAX_SESSION));
+        if (activeSessions >= maxSessions) {
+            LOG.warn(MessageFormat.format("Maximum session number reach for user ''{0}''.", user.getId()));
+            return false;
+        }
+
         //TODO Check if we need remember me handling
         LOG.debug(MessageFormat.format("Validated user ''{0}''.", user.getId()));
         context.setUser(user);
