@@ -12,6 +12,7 @@ import org.keycloak.forms.login.LoginFormsProvider;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.models.UserSessionModel;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -27,6 +28,7 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
     private static final String IP_AUTH_RANGES_ATTR = "ipAuthRanges";
     private static final String IP_AUTH_MAX_SESSION = "ipAuthMaxSession";
     private static final String INVALID_IP_ERROR_MESSAGE = "invalid-ip-error";
+    private static final String MAX_NUM_SESSIONS_MESSAGE = "max-num-session-error";
     private static final String LOGIN_FORM = "login-ip.ftl";
 
     @Override
@@ -108,13 +110,33 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
             return false;
         }
         RealmModel realm = context.getRealm();
+
         long activeSessions = context.getSession()
             .sessions()
             .getUserSessionsStream(realm, user)
+            .filter(s -> s.getState() == UserSessionModel.State.LOGGED_IN)
             .count();
-        int maxSessions = Integer.parseInt(user.getFirstAttribute(IP_AUTH_MAX_SESSION));
-        if (activeSessions >= maxSessions) {
-            LOG.warn(MessageFormat.format("Maximum session number reach for user ''{0}''.", user.getId()));
+
+        String maxSessionsAttr = user.getFirstAttribute(IP_AUTH_MAX_SESSION);
+        if (maxSessionsAttr == null) {
+            return true; // no limit
+        }
+
+        int maxSessions;
+        try {
+            maxSessions = Integer.parseInt(maxSessionsAttr);
+        } catch (NumberFormatException e) {
+            LOG.warn(MessageFormat.format("Invalid max session attribute for user ''{0}''.", user.getId()));
+            return true;
+        }
+
+        if (maxSessions > 0 && activeSessions >= maxSessions) {
+            LOG.warn(MessageFormat.format("Maximum session number reached for user ''{0}''.", user.getId()));
+
+            context.failureChallenge(
+                AuthenticationFlowError.ACCESS_DENIED,
+                challenge(context, MAX_NUM_SESSIONS_MESSAGE)
+            );
             return false;
         }
 
