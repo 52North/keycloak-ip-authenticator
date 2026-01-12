@@ -127,7 +127,7 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
                 return false;
             }
 
-            if (maxSessions > 0 && activeSessions >= maxSessions) {
+            if (maxSessions >= 0 && activeSessions >= maxSessions) {
                 LOG.warn(MessageFormat.format("Maximum session number reached ({0}) for user ''{1}''.", maxSessions, user.getId()));
 
                 context.failureChallenge(
