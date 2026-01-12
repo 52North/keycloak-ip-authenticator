@@ -24,7 +24,7 @@ the JAR artifact within Keycloak. You may want to adapt the Dockerfile to your p
 
 ## Dev Setup
 For development and debugging purpose use the [docker-compose.dev.yml](./docker/docker-compose.dev.yml). First, run
-`mvn clean package`, which creates a JAR artifact within the `./target` directory. Then start a Keycloak instance
+`mvn clean package -Pdocker`, which creates a JAR artifact within the `./target` directory. Then start a Keycloak instance
 with `docker compose -f ./docker/docker-compose.dev.yml up`. This injects the prebuilt JAR into the Keycloak container
 and opens port `8787` for remote debugging.
 
