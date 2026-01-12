@@ -118,26 +118,24 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
             .count();
 
         String maxSessionsAttr = user.getFirstAttribute(IP_AUTH_MAX_SESSION);
-        if (maxSessionsAttr == null) {
-            return true; // no limit
-        }
+        if (maxSessionsAttr != null) {
+            int maxSessions;
+            try {
+                maxSessions = Integer.parseInt(maxSessionsAttr);
+            } catch (NumberFormatException e) {
+                LOG.warn(MessageFormat.format("Invalid max session attribute for user ''{0}''.", user.getId()));
+                return false;
+            }
 
-        int maxSessions;
-        try {
-            maxSessions = Integer.parseInt(maxSessionsAttr);
-        } catch (NumberFormatException e) {
-            LOG.warn(MessageFormat.format("Invalid max session attribute for user ''{0}''.", user.getId()));
-            return true;
-        }
+            if (maxSessions > 0 && activeSessions >= maxSessions) {
+                LOG.warn(MessageFormat.format("Maximum session number reached for user ''{0}''.", user.getId()));
 
-        if (maxSessions > 0 && activeSessions >= maxSessions) {
-            LOG.warn(MessageFormat.format("Maximum session number reached for user ''{0}''.", user.getId()));
-
-            context.failureChallenge(
-                AuthenticationFlowError.ACCESS_DENIED,
-                challenge(context, MAX_NUM_SESSIONS_MESSAGE)
-            );
-            return false;
+                context.failureChallenge(
+                    AuthenticationFlowError.ACCESS_DENIED,
+                    challenge(context, MAX_NUM_SESSIONS_MESSAGE)
+                );
+                return false;
+            }
         }
 
         //TODO Check if we need remember me handling
