@@ -65,6 +65,17 @@ at *Realm settings* -> *User profile*. Create the attributes as follows:
   * *Permission*
       * *Who can edit?*: `Admin`
       * *Who can view?*: `Admin`
+* *Attribute*: `ipAuthMaxSession`
+  * *General settings*
+      * *Multivalued*: `Off`
+      * *Enabled when*: `Always`
+      * *Required field*: `Off`
+  * *Permission*
+      * *Who can edit?*: `Admin`
+      * *Who can view?*: `Admin`
+  * *Validations*
+    * *Validator name*: `integer`
+    * set min and max value for the parameter
 
 ### 3) Enable IP Authentication for Users
 Finally, you have to enable authentication by IP address for some users by setting the `ipAuthEnabled` user profile 

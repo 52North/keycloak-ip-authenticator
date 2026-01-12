@@ -12,6 +12,7 @@ import org.keycloak.forms.login.LoginFormsProvider;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.models.UserSessionModel;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -25,7 +26,9 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
 
     private static final String IP_AUTH_ENABLED_ATTR = "ipAuthEnabled";
     private static final String IP_AUTH_RANGES_ATTR = "ipAuthRanges";
+    private static final String IP_AUTH_MAX_SESSION = "ipAuthMaxSession";
     private static final String INVALID_IP_ERROR_MESSAGE = "invalid-ip-error";
+    private static final String MAX_NUM_SESSIONS_MESSAGE = "max-num-session-error";
     private static final String LOGIN_FORM = "login-ip.ftl";
 
     @Override
@@ -106,6 +109,35 @@ public class IPUserAuthenticator extends AbstractUsernameFormAuthenticator {
         if (!enabledUser(context, user)) {
             return false;
         }
+        RealmModel realm = context.getRealm();
+
+        long activeSessions = context.getSession()
+            .sessions()
+            .getUserSessionsStream(realm, user)
+            .filter(s -> s.getState() == UserSessionModel.State.LOGGED_IN)
+            .count();
+
+        String maxSessionsAttr = user.getFirstAttribute(IP_AUTH_MAX_SESSION);
+        if (maxSessionsAttr != null) {
+            int maxSessions;
+            try {
+                maxSessions = Integer.parseInt(maxSessionsAttr);
+            } catch (NumberFormatException e) {
+                LOG.warn(MessageFormat.format("Invalid max session attribute for user ''{0}''.", user.getId()));
+                return false;
+            }
+
+            if (maxSessions > 0 && activeSessions >= maxSessions) {
+                LOG.warn(MessageFormat.format("Maximum session number reached ({0}) for user ''{1}''.", maxSessions, user.getId()));
+
+                context.failureChallenge(
+                    AuthenticationFlowError.ACCESS_DENIED,
+                    challenge(context, MAX_NUM_SESSIONS_MESSAGE)
+                );
+                return false;
+            }
+        }
+
         //TODO Check if we need remember me handling
         LOG.debug(MessageFormat.format("Validated user ''{0}''.", user.getId()));
         context.setUser(user);
