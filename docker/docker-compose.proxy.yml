@@ -10,7 +10,7 @@ services:
       - start-dev
       - --import-realm
     volumes:
-      - ./realm-export-backup.json:/opt/keycloak/data/import/realm.json
+      - ./realm-export.json:/opt/keycloak/data/import/realm.json
       - ./data:/opt/keycloak/data/h2/
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin

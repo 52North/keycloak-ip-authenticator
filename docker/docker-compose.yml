@@ -1,6 +1,6 @@
 services:
   keycloak:
-    image: 52north/keycloak:26.2.5
+    image: 52north/keycloak:26.3.5
     container_name: keycloak
     restart: on-failure:5
 #    network_mode: host
@@ -10,7 +10,7 @@ services:
       - start-dev
       - --import-realm
     volumes:
-      - ./realm-export-backup.json:/opt/keycloak/data/import/realm.json
+      - ./realm-export.json:/opt/keycloak/data/import/realm.json
       - ./data:/opt/keycloak/data/h2/
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
