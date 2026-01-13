@@ -4,7 +4,7 @@
 
     <groupId>org.n52</groupId>
     <artifactId>keycloak-ip-authenticator</artifactId>
-    <version>26.3.5-2-SNAPSHOT</version>
+    <version>26.4.7-1-SNAPSHOT</version>
 
     <scm>
         <developerConnection>scm:git:https://github.com/52North/keycloak-ip-authenticator.git</developerConnection>
@@ -15,7 +15,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.keycloak>26.3.5</version.keycloak>
+        <version.keycloak>26.4.7</version.keycloak>
     </properties>
     <dependencies>
         <dependency>

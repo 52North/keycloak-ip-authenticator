@@ -1,6 +1,6 @@
 services:
   keycloak:
-    image: 52north/keycloak:26.3.5
+    image: 52north/keycloak:26.4.7
     container_name: keycloak
     restart: on-failure:5
 #    network_mode: host
