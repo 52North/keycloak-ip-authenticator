@@ -4,11 +4,11 @@
 
     <groupId>org.n52</groupId>
     <artifactId>keycloak-ip-authenticator</artifactId>
-    <version>26.5.0-1-SNAPSHOT</version>
+    <version>26.5.0-1</version>
 
     <scm>
         <developerConnection>scm:git:https://github.com/52North/keycloak-ip-authenticator.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>26.5.0-1</tag>
   </scm>
 
     <properties>
