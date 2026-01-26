@@ -36,6 +36,7 @@ public class IPUserAuthenticatorConfig {
             return DEFAULT_TRUSTED_PROXIES_COUNT;
         }
         
+    
         try {
             int count = Integer.parseInt(trustedProxiesCountStr.trim());
             
@@ -46,7 +47,8 @@ public class IPUserAuthenticatorConfig {
             
             return count;
         } catch (NumberFormatException e) {
-            LOG.warn("Configuration value for 'trusted-proxies-count' is not a valid integer: '" + trustedProxiesCountStr + "'. Using default value: " + DEFAULT_TRUSTED_PROXIES_COUNT, e);
+            LOG.warn("Configuration value for 'trusted-proxies-count' is not a valid integer: '" + trustedProxiesCountStr + "'. Using default value: " + DEFAULT_TRUSTED_PROXIES_COUNT);
+            LOG.trace("Exception while parsing 'trusted-proxies-count'", e);
             return DEFAULT_TRUSTED_PROXIES_COUNT;
         }
     }
